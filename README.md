@@ -44,6 +44,43 @@ Essential 系列采用无底板的独立符号，保留品牌和地区辨识度�
 
 导入后在本地将 `YOUR_SNELL_PSK` 替换为自己的 Snell 密钥，并将 Airport 的 `url` 示例地址替换为 Clash 格式订阅。Snell v5 需要所用客户端内核支持；这些文件不包含可直接使用的密钥和订阅。不要把真实密钥或订阅 Token 上传到公开仓库。
 
+#### 三份配置的默认设置与差异
+
+下表说明仓库 YAML 中明确写入的设置；客户端的 TUN 开关、覆写和合并配置可能改变最终运行值，应以客户端显示的运行配置为准。未写入某项不等于明确关闭该功能。
+
+| 项目 | clash.yaml | clashmi.yaml | clashverge.yaml |
+| --- | --- | --- | --- |
+| TUN | 未配置 `tun`，本文件不主动开启 | `tun.enable: true`，默认开启 | `tun.enable: false`，默认关闭 |
+| TUN 预设 | 无 | `stack: mixed`、自动路由、自动检测出口网卡均已配置 | 与 Mi 相同；开启 TUN 后使用这些预设 |
+| TUN DNS 接管 | 无 | `any:53`（UDP）及 `tcp://any:53` | 与 Mi 相同；TUN 关闭时不通过 TUN 接管 DNS |
+| 域名嗅探 | 未配置 `sniffer` | 明确开启 HTTP / TLS / QUIC 嗅探 | 与 Mi 相同 |
+| DNS 附加选项 | 未显式设置以下选项 | `respect-rules`、`use-hosts`、`use-system-hosts` 均为 `true`；额外设置 `proxy-server-nameserver` 为腾讯/阿里 DoH | 与 Mi 相同 |
+| 地区组 | 保留美国、香港、新加坡、台湾；香港和台湾为 fallback | 删除四个地区组 | 与 Mi 相同 |
+| 主代理组 | Snell5、四个地区组以及 Airport 订阅节点可选 | Snell5 和 Airport 订阅节点可选 | 与 Mi 相同 |
+| 业务组 | Netflix、Telegram、Twitter、TikTok、AI、Spotify、YouTube、YouTube-Music 保留相应地区候选 | 上述业务组只引用主代理组 `Proxy🪁` | 与 Mi 相同 |
+| Apple-AI | 主代理组、美国组、DIRECT | 主代理组、DIRECT | 与 Mi 相同 |
+
+逐项解析对比后，`clashmi.yaml` 和 `clashverge.yaml` 的有效配置仅有 `tun.enable` 不同，文件头注释也不同。Clash 版本还存在上表列出的 DNS、嗅探和策略组差异，并非只差一个 TUN 开关。
+
+三份共同设置：混合代理端口 `7890`、`allow-lan: false`（不向局域网开放代理）、`mode: rule`（规则分流）、日志 `info`、IPv6 关闭、`unified-delay` 和 `tcp-concurrent` 开启、保存策略选择和 Fake-IP 映射。DNS 均开启 Fake-IP，使用相同的默认 DNS、DoH 和 Fake-IP 排除列表。Snell5 节点模板、Airport 订阅模板、12 份规则集及规则匹配顺序相同；Airport 和规则集的更新间隔为 86400 秒，Airport 健康检查间隔为 600 秒。Final、Apple、AdBlock 的候选策略也相同。
+
+Mi / Verge 的嗅探预设：HTTP 端口 80、8080–8880，TLS / QUIC 端口 443、8443；开启 `parse-pure-ip` 和 `override-destination`，排除 `Mijia Cloud` 与 `+.push.apple.com`。嗅探用于辅助识别连接域名，不是解密 HTTPS 内容。
+
+#### TUN 开启和关闭的区别
+
+| 状态 | 流量如何进入客户端 | 实际使用区别 |
+| --- | --- | --- |
+| 开启 TUN | 创建虚拟网卡；本配置启用自动路由，将被路由接管的流量交给内核处理 | 能覆盖很多不遵循系统代理的软件，包括部分游戏和命令行工具；可接管 TCP / UDP，实际代理能力仍取决于内核和节点 |
+| 关闭 TUN | 本文件仍提供 `7890` HTTP / SOCKS 混合代理入口 | 通常需开启客户端的“系统代理”，或在软件中手动指定代理；忽略系统代理的软件可能直接联网。SOCKS 的 UDP 能力取决于应用和节点，普通 HTTP 系统代理不能全面接管 UDP |
+
+**TUN 开启不等于所有连接都走代理。** 三份文件都使用规则模式：被接管的连接仍按规则走 DIRECT、代理或 REJECT；例如国内规则和内网规则仍直连。关闭 TUN 也不等于关闭代理，但未进入代理入口的连接不会受到这些分流规则控制。
+
+桌面系统启用 TUN 通常需要管理员权限或客户端服务模式，移动端通常需要授予 VPN 权限；它会改变路由/DNS 的处理范围，可能与其他 VPN 或虚拟网卡软件冲突，不保证提速或降低延迟。DNS 接管也不是对所有 DNS 的强制拦截：本预设针对 53 端口，应用自行使用的 DoH/DoT 不会仅因这些设置自动变成内置 DNS 查询。
+
+在支持并直接使用这些 YAML 的客户端里，可通过 `tun.enable` 切换 Mi / Verge 的 TUN；仅修改 `clash.yaml` 的一个开关不足以获得完整的 Mi / Verge TUN 预设。手机客户端是否启用系统 VPN 隧道，还取决于客户端自身实现和权限，不能只凭 YAML 是否含 `tun` 判断。
+
+TUN 参数及接管限制参考 [Mihomo 官方 TUN 文档](https://wiki.metacubex.one/config/inbound/tun/)；系统代理入口与 TUN 覆盖范围参考 [MetaCubeX 官方 metacubexd 说明](https://github.com/MetaCubeX/metacubexd)。以上对比来自本仓库文件，未进行各平台实机连通性测试。
+
 ### Surge
 
 `surge.conf` 预置了本仓库的可下载示例订阅 `examples/subscription.list`，四个地区组均有名称匹配的示例节点，示例节点不能实际连接。使用时只需将 Airport 行 `policy-path=` 后面的 URL 替换为你的 Surge 格式完整订阅 URL，再把订阅域名规则中的 `example.com` 改成真实订阅域名。Airport 的 `hidden=1` 可改为 `hidden=0` 以显示入口。Zus、Zjp 是独立示例节点，可修改或删除；删除时也要从 Proxy🪁 策略组移除引用。本地控制 API 默认注释关闭。不要将真实订阅 Token 提交到公开仓库。
