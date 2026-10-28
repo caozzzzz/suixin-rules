@@ -1,6 +1,6 @@
 # ============================================================
 # Clash Client
-# 基于 caozzzzz/surge-rules 的 Surge 配置适配
+# 基于 caozzzzz/suixin-rules 的 Surge 配置适配
 # ============================================================
 
 mixed-port: 7890
@@ -363,7 +363,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/apple-ai.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/apple-ai.list"
     path: ./rule_provider/apple-ai.list
     interval: 86400
 
@@ -372,7 +372,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/ai.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/ai.list"
     path: ./rule_provider/ai.list
     interval: 86400
 
@@ -381,7 +381,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/apple.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/apple.list"
     path: ./rule_provider/apple.list
     interval: 86400
 
@@ -390,7 +390,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/netflix.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/netflix.list"
     path: ./rule_provider/netflix.list
     interval: 86400
 
@@ -399,7 +399,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/telegram.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/telegram.list"
     path: ./rule_provider/telegram.list
     interval: 86400
 
@@ -408,7 +408,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/twitter.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/twitter.list"
     path: ./rule_provider/twitter.list
     interval: 86400
 
@@ -417,7 +417,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/tiktok.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/tiktok.list"
     path: ./rule_provider/tiktok.list
     interval: 86400
 
@@ -426,7 +426,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/spotify.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/spotify.list"
     path: ./rule_provider/spotify.list
     interval: 86400
 
@@ -435,7 +435,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/youtube-music.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/youtube-music.list"
     path: ./rule_provider/youtube-music.list
     interval: 86400
 
@@ -444,7 +444,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/youtube.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/youtube.list"
     path: ./rule_provider/youtube.list
     interval: 86400
 
@@ -453,7 +453,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/adblock.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/adblock.list"
     path: ./rule_provider/adblock.list
     interval: 86400
 
@@ -462,7 +462,7 @@ rule-providers:
     type: http
     behavior: classical
     format: text
-    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/china.list"
+    url: "https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/china.list"
     path: ./rule_provider/china.list
     interval: 86400
 

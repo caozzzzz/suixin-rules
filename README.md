@@ -1,6 +1,6 @@
-# Surge Rules · 个人代理配置与规则
+# 随心规则 · 多客户端代理配置与规则
 
-提供 Surge、Shadowrocket、Clash、Clash Mi、Clash Verge 五份配置模板，共享本仓库的远程规则。按客户端选择配置，填入自己的节点或订阅后使用。
+随心规则提供 Surge、Shadowrocket、Clash、Clash Mi、Clash Verge 五份配置模板，共享本仓库的远程规则。按客户端选择配置，填入自己的节点或订阅后使用。
 
 **仓库中的示例节点和订阅不能实际连接。真实密钥、订阅 Token 和节点凭据只在本地填写。**
 
@@ -17,11 +17,11 @@
 
 | 客户端 | 配置 | 节点来源 |
 | --- | --- | --- |
-| Surge | [surge.conf](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/surge.conf) | 在配置中填写 Surge 格式订阅或节点 |
-| Shadowrocket | [shadowrocket.conf](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/shadowrocket.conf) | 在 App 首页单独添加订阅或节点 |
-| Clash | [clash.yaml](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/clash.yaml) | 在配置中填写 Clash 格式订阅或节点 |
-| Clash Mi | [clashmi.yaml](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/clashmi.yaml) | 同 Clash；默认开启 TUN |
-| Clash Verge | [clashverge.yaml](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/clashverge.yaml) | 同 Clash；默认关闭 TUN |
+| Surge | [surge.conf](https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/surge.conf) | 在配置中填写 Surge 格式订阅或节点 |
+| Shadowrocket | [shadowrocket.conf](https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/shadowrocket.conf) | 在 App 首页单独添加订阅或节点 |
+| Clash | [clash.yaml](https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/clash.yaml) | 在配置中填写 Clash 格式订阅或节点 |
+| Clash Mi | [clashmi.yaml](https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/clashmi.yaml) | 同 Clash；默认开启 TUN |
+| Clash Verge | [clashverge.yaml](https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/clashverge.yaml) | 同 Clash；默认关闭 TUN |
 
 文件名不代表所有同名客户端或内核都支持其中全部功能。三份 YAML 含 Snell v5 节点模板，使用前确认内核支持；不使用该节点时，需同时移除节点及策略组中的引用。
 
@@ -155,11 +155,11 @@ GitHub Actions 每天北京时间 **06:20** 同步上游并检查格式，也可
 ```ini
 [Rule]
 DOMAIN-SUFFIX,raw.githubusercontent.com,Proxy🪁
-RULE-SET,https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/apple-ai.list,Apple-AI,extended-matching
-RULE-SET,https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/ai.list,AI,extended-matching
-RULE-SET,https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/apple.list,Apple
-RULE-SET,https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/netflix.list,Netflix
-RULE-SET,https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/china.list,DIRECT
+RULE-SET,https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/apple-ai.list,Apple-AI,extended-matching
+RULE-SET,https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/ai.list,AI,extended-matching
+RULE-SET,https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/apple.list,Apple
+RULE-SET,https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/netflix.list,Netflix
+RULE-SET,https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/rules/china.list,DIRECT
 GEOIP,CN,DIRECT
 FINAL,Final,dns-failed
 ```
@@ -192,7 +192,7 @@ FINAL,Final,dns-failed
 Surge 配置引用本仓库托管的 Essential 图标，成品统一为 256×256 透明 PNG，符号放在 208×208 内容区域内。图标由 ImageGen 设计并从透明图集中拆分为源图片；保留旧版带版本号文件，兼容已有下载地址。例如：
 
 ```ini
-icon-url=https://raw.githubusercontent.com/caozzzzz/surge-rules/main/icons/ai.png?v=essential-20261002
+icon-url=https://raw.githubusercontent.com/caozzzzz/suixin-rules/main/icons/ai.png?v=essential-20261002
 ```
 
 ### 本地维护命令
