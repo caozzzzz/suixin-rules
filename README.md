@@ -1,8 +1,42 @@
-# Personal Surge Rules
+# Personal Proxy Configs & Rules
 
-这是一个可直接托管到 GitHub 的 Surge 外部规则集仓库。
+个人代理配置与规则仓库，包含 Surge、Shadowrocket、Clash、Clash Mi、Clash Verge 配置模板，以及共享规则和策略组图标。配置不提供可实际连接的订阅或节点凭据。
 
-## 目录
+## 配置入口
+
+| 客户端 | 配置下载（Raw） | 使用前需要准备 |
+| --- | --- | --- |
+| Surge | [surge.conf](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/surge.conf) | Surge 格式订阅，或自己的节点 |
+| Shadowrocket | [shadowrocket.conf](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/shadowrocket.conf) | 在 App 首页单独添加节点或订阅 |
+| Clash | [clash.yaml](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/clash.yaml) | Clash 格式订阅、支持所用协议的内核 |
+| Clash Mi | [clashmi.yaml](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/clashmi.yaml) | 同上；文件中默认开启 TUN |
+| Clash Verge | [clashverge.yaml](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/clashverge.yaml) | 同上；文件中默认关闭 TUN |
+
+## 文件结构
+
+```text
+.
+├── README.md                       # 使用说明与默认设置
+├── surge.conf                      # Surge 配置入口
+├── shadowrocket.conf               # Shadowrocket 配置入口
+├── clash.yaml                      # Clash 配置入口
+├── clashmi.yaml                     # Clash Mi 配置入口
+├── clashverge.yaml                  # Clash Verge 配置入口
+├── rules/                          # 共享远程规则集
+├── icons/                          # 客户端引用的成品图标与兼容文件
+│   └── source/                     # 图标源图片
+├── examples/
+│   └── subscription.list           # Surge 示例节点订阅（无法连接）
+├── scripts/                        # 仓库维护工具
+│   ├── generate-icons.py           # 生成图标
+│   ├── requirements-icons.txt      # 图标生成依赖（Pillow 固定版本）
+│   └── validate_rules.py           # 检查规则格式
+└── .github/workflows/              # 自动同步规则、生成图标
+```
+
+主配置保留在根目录，便于直接下载；规则、图标、示例、维护工具分别归档。现有配置、规则和图标的下载地址保持不变。`requirements-icons.txt` 已移至 `scripts/`，自动化中的安装命令及触发路径也同步更新。它是维护依赖，普通使用者无需安装；直接删除会使现有图标生成流程缺少依赖清单。
+
+### 规则与资源索引
 
 - `rules/ai.list`：AI 合集，包含 ChatGPT、Gemini 等（自动同步）
 - `rules/openai.list`：旧 OpenAI 兼容文件，不再由主配置引用
@@ -16,6 +50,7 @@
 - `rules/twitter.list`：Twitter / X（自动同步）
 - `rules/tiktok.list`：TikTok（自动同步）
 - `rules/china.list`：中国大陆 IPv4 规则（自动同步）
+- `rules/adblock.list`：广告规则（自动同步；Shadowrocket 和三份 Clash 配置引用，当前 Surge 主配置未引用）
 - `icons/`：Essential 系列策略组图标（256×256、透明背景 PNG）
 - `icons/source/`：18 枚独立图标的设计源图片
 - `scripts/generate-icons.py`：统一尺寸、留白并生成图标，保留旧版 URL 兼容文件
@@ -30,7 +65,7 @@ icon-url=https://raw.githubusercontent.com/caozzzzz/surge-rules/main/icons/ai.pn
 
 Essential 系列采用无底板的独立符号，保留品牌和地区辨识度。Airport 使用客机剪影，Proxy 使用蓝紫交错流线表达流量转发。图标设计由 ImageGen 制作，再从透明图集中拆分为独立源图片。
 
-在本地运行 `python -m pip install -r requirements-icons.txt` 安装固定版本依赖后运行 `python scripts/generate-icons.py`，可以从 `icons/source/` 重新生成整套图标。所有图标统一输出为 256×256 RGBA PNG，符号置于 208×208 的内容区域，保留透明留白。图标源图片、生成脚本或依赖发生变化时自动生成，也可手动运行 Generate policy icons；每日规则同步不再重新生成图标。旧版带版本号的图标文件仍保留并同步生成，以兼容已下载的配置。
+在本地运行 `python -m pip install -r scripts/requirements-icons.txt` 安装固定版本依赖后运行 `python scripts/generate-icons.py`，可以从 `icons/source/` 重新生成整套图标。所有图标统一输出为 256×256 RGBA PNG，符号置于 208×208 的内容区域，保留透明留白。图标源图片、生成脚本或依赖发生变化时自动生成，也可手动运行 Generate policy icons；每日规则同步不再重新生成图标。旧版带版本号的图标文件仍保留并同步生成，以兼容已下载的配置。
 
 ## 首次导入
 
@@ -85,6 +120,40 @@ TUN 参数及接管限制参考 [Mihomo 官方 TUN 文档](https://wiki.metacube
 
 `surge.conf` 预置了本仓库的可下载示例订阅 `examples/subscription.list`，四个地区组均有名称匹配的示例节点，示例节点不能实际连接。使用时只需将 Airport 行 `policy-path=` 后面的 URL 替换为你的 Surge 格式完整订阅 URL，再把订阅域名规则中的 `example.com` 改成真实订阅域名。Airport 的 `hidden=1` 可改为 `hidden=0` 以显示入口。Zus、Zjp 是独立示例节点，可修改或删除；删除时也要从 Proxy🪁 策略组移除引用。本地控制 API 默认注释关闭。不要将真实订阅 Token 提交到公开仓库。
 
+#### Surge 默认行为
+
+- 美国、新加坡地区组为手动选择；香港、台湾为 fallback，按优先级选择可用节点。地区筛选依赖订阅节点名称。
+- Airport 订阅每 86400 秒更新；香港、台湾健康检查间隔为 600 秒。配置引用本仓库托管的策略组图标。
+- DNS 使用国内普通 DNS 和 DoH，IPv6 关闭，Wi-Fi/热点代理共享关闭，本地控制 API 默认注释关闭。
+- Apple 默认直连；Apple-AI 优先于 AI 和普通 Apple 规则。内网、国内规则直连，其余流量交给 Final 策略组。
+- `block-quic = all-proxy` 阻止代理方向的 QUIC，直连不受此设置影响。
+- 当前 Surge 主配置虽然定义了 AdBlock 策略组，但未引用 `rules/adblock.list`，因此不能仅凭出现该策略组就认为启用了该广告规则集。
+
+在 Surge 中通过上方 Raw 地址导入配置，替换示例订阅或节点后，选择规则模式并启动连接。YAML 中的 `tun.enable` 是 Clash/Mihomo 配置项，不能用它判断 Surge 的 VPN 或增强模式状态；实际接管方式取决于平台及 App 设置。
+
+### Shadowrocket
+
+1. 在首页添加自己的订阅或节点；订阅与本仓库的规则配置分开管理，公开配置的 `[Proxy]` 段不包含节点凭据。
+2. 在“配置”页通过 [shadowrocket.conf 的 Raw 地址](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/shadowrocket.conf) 下载配置，并选择“使用配置”。
+3. 首页“全局路由”选择“配置”，选择可用节点/策略组，然后启动连接；首次连接按系统提示授予 VPN 权限。
+4. 节点名需包含香港/HK、新加坡/SG、美国/US、台湾/TW 等地区关键词；某个地区组没有节点时，检查命名或改选“全部节点”/`PROXY`。`PROXY` 指首页当前选中的节点。
+
+#### Shadowrocket 默认行为
+
+| 项目 | 当前配置 |
+| --- | --- |
+| 地区组 | 美国、新加坡为 `url-test` 自动测速选择；香港为 `load-balance`；台湾为 `fallback`；检查间隔 600 秒 |
+| 主代理与兜底 | “代理选择”默认选香港组；“兜底策略”默认选“代理选择”，也可手动选 DIRECT |
+| 应用策略 | AI、Netflix、Twitter、TikTok 默认美国；Spotify 默认新加坡；Telegram、YouTube、YouTube-Music 默认香港；Apple 默认 DIRECT，Apple-AI 默认“代理选择” |
+| DNS | 阿里/腾讯 DoH 与普通 DNS，失败回退系统 DNS；接管发往 `8.8.8.8:53`、`8.8.4.4:53` 的 DNS；IPv6 关闭 |
+| 局域网 | `skip-proxy` 和 `tun-excluded-routes` 配置内网及保留网段旁路 |
+| 规则 | 内网与 GitHub 规则之后，先匹配广告、Apple-AI、AI 和其他业务；部分 Apple 域名显式交给 Apple；再匹配国内规则与国内 IP，最后兜底 |
+| 广告 | 引用 `rules/adblock.list`，AdBlock 默认 REJECT，可手动改 DIRECT |
+| QUIC / UDP | `block-quic = all-proxy`；节点不支持 UDP 策略时设为 REJECT |
+| HTTPS 解密 | 未配置 MITM hostname，不需要为这份配置安装解密证书 |
+
+Shadowrocket 没有照搬 Surge 的所有设置：香港组使用负载均衡，且当前没有引用 `rules/apple.list`，只对配置中列出的部分 Apple 域名显式指定 Apple 策略。它使用 iOS 的 VPN 隧道接管流量，连接开关及“全局路由”由 App 管理，不使用 Clash YAML 的 `tun.enable` 开关。以上是配置文件的静态说明，不代表已做各平台实机测试。
+
 ## Surge 引用
 
 仓库所有者为 `caozzzzz`：
@@ -114,7 +183,9 @@ FINAL,Final,dns-failed
 
 GitHub Actions 每天北京时间 06:20 同步上游规则，并在提交前执行格式检查。也可以在仓库的 Actions 页面手动运行 `Sync Surge rules`。
 
-香港策略组使用 fallback，按节点列表优先级选择可用节点，故障时自动切换；Apple-AI 优先于 AI 和普通 Apple 规则匹配。
+## Surge 分流细节
+
+以下仅说明 `surge.conf`。香港策略组使用 fallback，按节点列表优先级选择可用节点，故障时自动切换；Apple-AI 优先于 AI 和普通 Apple 规则匹配。
 
 LAN 检查分为两层：开头使用 `RULE-SET,LAN,DIRECT,no-resolve`，避免为判断是否内网而提前解析所有域名；应用规则之后、国内规则之前保留 `RULE-SET,LAN,DIRECT`，继续识别域名解析出的内网地址。应用规则优先于后面的 LAN 检查；如果自定义内网域名可能命中应用规则，应在开头显式添加其直连规则。此调整不影响应用规则自身可能触发的 DNS 查询。
 
