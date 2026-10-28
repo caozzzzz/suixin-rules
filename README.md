@@ -79,25 +79,31 @@ Essential 系列采用无底板的独立符号，保留品牌和地区辨识度�
 
 导入后在本地将 `YOUR_SNELL_PSK` 替换为自己的 Snell 密钥，并将 Airport 的 `url` 示例地址替换为 Clash 格式订阅。Snell v5 需要所用客户端内核支持；这些文件不包含可直接使用的密钥和订阅。不要把真实密钥或订阅 Token 上传到公开仓库。
 
-#### 三份配置的默认设置与差异
+#### 五份配置的默认设置与差异
 
-下表说明仓库 YAML 中明确写入的设置；客户端的 TUN 开关、覆写和合并配置可能改变最终运行值，应以客户端显示的运行配置为准。未写入某项不等于明确关闭该功能。
+下表对比 Surge、Shadowrocket、Clash、Clash Mi、Clash Verge 五份配置中明确写入的设置。客户端开关、覆写和合并配置可能改变最终运行值，应以运行配置为准。未写入某项不等于明确关闭；Surge / Shadowrocket 的 VPN 接管与 Clash 的 `tun.enable` 不能直接等同。
 
-| 项目 | clash.yaml | clashmi.yaml | clashverge.yaml |
-| --- | --- | --- | --- |
-| TUN | 未配置 `tun`，本文件不主动开启 | `tun.enable: true`，默认开启 | `tun.enable: false`，默认关闭 |
-| TUN 预设 | 无 | `stack: mixed`、自动路由、自动检测出口网卡均已配置 | 与 Mi 相同；开启 TUN 后使用这些预设 |
-| TUN DNS 接管 | 无 | `any:53`（UDP）及 `tcp://any:53` | 与 Mi 相同；TUN 关闭时不通过 TUN 接管 DNS |
-| 域名嗅探 | 未配置 `sniffer` | 明确开启 HTTP / TLS / QUIC 嗅探 | 与 Mi 相同 |
-| DNS 附加选项 | 未显式设置以下选项 | `respect-rules`、`use-hosts`、`use-system-hosts` 均为 `true`；额外设置 `proxy-server-nameserver` 为腾讯/阿里 DoH | 与 Mi 相同 |
-| 地区组 | 保留美国、香港、新加坡、台湾；香港和台湾为 fallback | 删除四个地区组 | 与 Mi 相同 |
-| 主代理组 | Snell5、四个地区组以及 Airport 订阅节点可选 | Snell5 和 Airport 订阅节点可选 | 与 Mi 相同 |
-| 业务组 | Netflix、Telegram、Twitter、TikTok、AI、Spotify、YouTube、YouTube-Music 保留相应地区候选 | 上述业务组只引用主代理组 `Proxy🪁` | 与 Mi 相同 |
-| Apple-AI | 主代理组、美国组、DIRECT | 主代理组、DIRECT | 与 Mi 相同 |
+| 项目 | Surge（surge.conf） | Shadowrocket（shadowrocket.conf） | Clash（clash.yaml） | Clash Mi（clashmi.yaml） | Clash Verge（clashverge.yaml） |
+| --- | --- | --- | --- | --- | --- |
+| TUN / VPN 接管 | 由平台和 App 的 VPN / 增强模式控制；未设置 Clash 式开关 | 由 App 的 VPN 连接开关控制；全局路由需选“配置” | 未配置 `tun`，本文件不主动开启 | `tun.enable: true`，默认开启 | `tun.enable: false`，默认关闭 |
+| 接管预设 | `include-all-networks`、`include-local-networks` 均为 false；设置内网绕过 | 设置 `skip-proxy` 和 `tun-excluded-routes`，旁路内网及保留地址 | 无 TUN 预设 | `stack: mixed`；自动路由、自动检测出口网卡均开启 | 与 Mi 相同，开启 TUN 后生效 |
+| DNS 接管 | `hijack-dns`：8.8.8.8:53、8.8.4.4:53 | 与 Surge 相同 | 未配置 TUN DNS 接管 | `any:53`（UDP）及 `tcp://any:53` | 与 Mi 相同，TUN 关闭时不通过 TUN 接管 |
+| 域名嗅探 | 未设置 Mihomo 式 `sniffer`，不据此推断 App 自身能力 | 未设置 Mihomo 式 `sniffer`，不据此推断 App 自身能力 | 未配置 `sniffer` | 明确开启 HTTP / TLS / QUIC 嗅探 | 与 Mi 相同 |
+| DNS 配置 | 阿里/腾讯 DoH + 普通 DNS；读取系统 Hosts；配置 `always-real-ip` 排除 | 阿里/腾讯 DoH + 普通 DNS；失败回退系统 DNS；本地 Hosts 用于代理连接 | Fake-IP；阿里/腾讯 DoH + 默认 DNS；设置 Fake-IP 排除列表 | 与 Clash 相同，额外明确开启 `respect-rules`、`use-hosts`、`use-system-hosts`，设置节点域名解析 DNS | 与 Mi 相同 |
+| 地区组 | 美国、新加坡 select；香港、台湾 fallback | 美国、新加坡 url-test；香港 load-balance；台湾 fallback | 美国、新加坡 select；香港、台湾 fallback | 删除四个地区组 | 与 Mi 相同 |
+| 节点来源与主代理组 | Airport 的 Surge 格式订阅、四个地区组、Zus/Zjp 示例节点 | 首页独立添加节点/订阅；主组可选地区、全部节点及 PROXY，默认香港 | Snell5、四个地区组及 Airport 的 Clash 格式订阅节点 | Snell5 和 Airport 订阅节点 | 与 Mi 相同 |
+| 业务组 | Netflix、Telegram、Twitter、TikTok、AI、Spotify、YouTube、YouTube-Music 保留相应地区候选 | 保留地区候选；AI/Netflix/Twitter/TikTok 默认美国，Spotify 默认新加坡，其余三项默认香港 | 与 Surge 的这些业务组候选一致 | 这些业务组只引用主代理组 `Proxy🪁` | 与 Mi 相同 |
+| Apple-AI | 主代理组、美国组、DIRECT | 主代理组、美国组、DIRECT；明确默认主代理组 | 主代理组、美国组、DIRECT | 主代理组、DIRECT | 与 Mi 相同 |
+| Apple 普通服务 | 引用 `rules/apple.list`；Apple 候选为 DIRECT、主代理组 | 未引用 `rules/apple.list`；部分 Apple 域名显式指定 Apple，默认 DIRECT | 引用 `rules/apple.list`；Apple 候选为 DIRECT、主代理组 | 与 Clash 相同 | 与 Clash 相同 |
+| 广告规则 | 定义 AdBlock 组，但未引用广告规则集 | 引用 `rules/adblock.list`，AdBlock 默认 REJECT | 引用广告规则集；AdBlock 候选为 REJECT、DIRECT | 与 Clash 相同 | 与 Clash 相同 |
+| IPv6 | 关闭，`ipv6-vif = disabled` | `ipv6`、`prefer-ipv6` 均为 false | 关闭 | 关闭 | 关闭 |
+| QUIC | `block-quic = all-proxy` | `block-quic = all-proxy` | 未显式配置同等 QUIC 阻断项 | 与 Clash 相同；嗅探 QUIC 不等于阻断 QUIC | 与 Mi 相同 |
+| 代理入口与共享 | HTTP 6152、SOCKS 6153；监听地址 0.0.0.0，Wi-Fi/热点共享开关关闭 | 文件未显式设置本地代理监听端口 | 混合端口 7890；`allow-lan: false` | 与 Clash 相同 | 与 Clash 相同 |
+| 规则与兜底 | 内网、国内直连；Apple-AI 在 AI / Apple 前；最终交给 Final | 内网、国内直连；广告先于业务规则；最终交给“兜底策略” | 内网、国内直连；Apple-AI 在 AI / Apple 前；最终 MATCH,Final | 与 Clash 相同 | 与 Clash 相同 |
 
 逐项解析对比后，`clashmi.yaml` 和 `clashverge.yaml` 的有效配置仅有 `tun.enable` 不同，文件头注释也不同。Clash 版本还存在上表列出的 DNS、嗅探和策略组差异，并非只差一个 TUN 开关。
 
-三份共同设置：混合代理端口 `7890`、`allow-lan: false`（不向局域网开放代理）、`mode: rule`（规则分流）、日志 `info`、IPv6 关闭、`unified-delay` 和 `tcp-concurrent` 开启、保存策略选择和 Fake-IP 映射。DNS 均开启 Fake-IP，使用相同的默认 DNS、DoH 和 Fake-IP 排除列表。Snell5 节点模板、Airport 订阅模板、12 份规则集及规则匹配顺序相同；Airport 和规则集的更新间隔为 86400 秒，Airport 健康检查间隔为 600 秒。Final、Apple、AdBlock 的候选策略也相同。
+以下共同设置仅指三份 Clash 系列 YAML，不包括 Surge / Shadowrocket：混合代理端口 `7890`、`allow-lan: false`（不向局域网开放代理）、`mode: rule`（规则分流）、日志 `info`、IPv6 关闭、`unified-delay` 和 `tcp-concurrent` 开启、保存策略选择和 Fake-IP 映射。DNS 均开启 Fake-IP，使用相同的默认 DNS、DoH 和 Fake-IP 排除列表。Snell5 节点模板、Airport 订阅模板、12 份规则集及规则匹配顺序相同；Airport 和规则集的更新间隔为 86400 秒，Airport 健康检查间隔为 600 秒。Final、Apple、AdBlock 的候选策略也相同。
 
 Mi / Verge 的嗅探预设：HTTP 端口 80、8080–8880，TLS / QUIC 端口 443、8443；开启 `parse-pure-ip` 和 `override-destination`，排除 `Mijia Cloud` 与 `+.push.apple.com`。嗅探用于辅助识别连接域名，不是解密 HTTPS 内容。
 
