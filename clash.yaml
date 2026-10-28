@@ -1,0 +1,615 @@
+# ============================================================
+# Clash Client
+# 基于 caozzzzz/surge-rules 的 Surge 配置适配
+# ============================================================
+
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: info
+ipv6: false
+
+unified-delay: true
+tcp-concurrent: true
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+
+# ============================================================
+# DNS
+# ============================================================
+
+dns:
+  enable: true
+  ipv6: false
+
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+
+  nameserver:
+    - https://223.5.5.5/dns-query
+    - https://1.12.12.12/dns-query
+
+  fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+    - "localhost"
+
+    # 对应 Surge always-real-ip
+    - "link-ip.nextdns.io"
+    - "*.msftconnecttest.com"
+    - "*.msftncsi.com"
+    - "*.srv.nintendo.net"
+    - "*.stun.playstation.net"
+    - "xbox.*.microsoft.com"
+    - "*.xboxlive.com"
+    - "*.logon.battlenet.com.cn"
+    - "*.logon.battle.net"
+    - "stun.l.google.com"
+
+
+# ============================================================
+# 手动节点
+# ============================================================
+
+proxies:
+
+  # ----------------------------------------------------------
+  # Snell v5
+  # Surge:
+  # Snell5 = snell, 161.153.0.188, 17811,
+  # psk=..., version=5
+  # ----------------------------------------------------------
+
+  - name: "Snell5"
+    type: snell
+    server: 161.153.0.188
+    port: 17811
+    psk: "YOUR_SNELL_PSK"
+    version: 5
+
+
+# ============================================================
+# 机场订阅
+# ============================================================
+
+proxy-providers:
+
+  Airport:
+    type: http
+
+    # ========================================================
+    # 修改这里
+    # 必须填写 Clash / Mihomo 格式订阅
+    # ========================================================
+
+    url: "https://example.com/你的Clash订阅"
+
+    path: ./proxy_provider/airport.yaml
+
+    interval: 86400
+
+    health-check:
+      enable: true
+      url: http://cp.cloudflare.com/generate_204
+      interval: 600
+
+
+# ============================================================
+# 策略组
+# ============================================================
+
+proxy-groups:
+
+  # ----------------------------------------------------------
+  # 🇺🇸 美国
+  # ----------------------------------------------------------
+
+  - name: "🇺🇸 America"
+    type: select
+
+    use:
+      - Airport
+
+    filter: "(?i)(美国|美國|US|United States|洛杉矶|洛杉磯|硅谷|圣何塞|聖何塞|西雅图|西雅圖)"
+
+
+  # ----------------------------------------------------------
+  # 🇭🇰 香港
+  # Surge 原配置为 fallback
+  # ----------------------------------------------------------
+
+  - name: "🇭🇰 Hong Kong"
+    type: fallback
+
+    use:
+      - Airport
+
+    filter: "(?i)(香港|港|HK|Hong Kong)"
+
+    url: http://cp.cloudflare.com/generate_204
+    interval: 600
+    timeout: 5000
+
+
+  # ----------------------------------------------------------
+  # 🇸🇬 新加坡
+  # ----------------------------------------------------------
+
+  - name: "🇸🇬 Singapore"
+    type: select
+
+    use:
+      - Airport
+
+    filter: "(?i)(新加坡|狮城|獅城|SG|Singapore)"
+
+
+  # ----------------------------------------------------------
+  # 🇹🇼 台湾
+  # Surge 原配置为 fallback
+  # ----------------------------------------------------------
+
+  - name: "🇹🇼 Taiwan"
+    type: fallback
+
+    use:
+      - Airport
+
+    filter: "(?i)(台湾|台灣|TW|Taiwan|台北|新北)"
+
+    url: http://cp.cloudflare.com/generate_204
+    interval: 600
+    timeout: 5000
+
+
+  # ==========================================================
+  # 主代理
+  #
+  # Snell5 放第一位
+  # 可以直接选择 Snell5
+  # 也可以选择地区策略组
+  # 也可以选择 Airport 中的具体节点
+  # ==========================================================
+
+  - name: "Proxy🪁"
+    type: select
+
+    proxies:
+      - "Snell5"
+      - "🇭🇰 Hong Kong"
+      - "🇸🇬 Singapore"
+      - "🇺🇸 America"
+      - "🇹🇼 Taiwan"
+
+    use:
+      - Airport
+
+
+  # ==========================================================
+  # Final
+  # ==========================================================
+
+  - name: "Final"
+    type: select
+
+    proxies:
+      - "Proxy🪁"
+      - DIRECT
+
+
+  # ==========================================================
+  # Netflix
+  # ==========================================================
+
+  - name: "Netflix"
+    type: select
+
+    proxies:
+      - "🇺🇸 America"
+      - "🇭🇰 Hong Kong"
+      - "🇸🇬 Singapore"
+      - "Proxy🪁"
+
+
+  # ==========================================================
+  # Telegram
+  # ==========================================================
+
+  - name: "Telegram"
+    type: select
+
+    proxies:
+      - "🇭🇰 Hong Kong"
+      - "🇸🇬 Singapore"
+      - "Proxy🪁"
+
+
+  # ==========================================================
+  # Twitter / X
+  # ==========================================================
+
+  - name: "Twitter"
+    type: select
+
+    proxies:
+      - "🇺🇸 America"
+      - "🇭🇰 Hong Kong"
+      - "Proxy🪁"
+
+
+  # ==========================================================
+  # TikTok
+  # ==========================================================
+
+  - name: "TikTok"
+    type: select
+
+    proxies:
+      - "🇺🇸 America"
+      - "🇸🇬 Singapore"
+      - "Proxy🪁"
+
+
+  # ==========================================================
+  # AI
+  # ChatGPT / Claude / Gemini / Grok / Perplexity 等
+  # ==========================================================
+
+  - name: "AI"
+    type: select
+
+    proxies:
+      - "🇺🇸 America"
+      - "🇸🇬 Singapore"
+      - "Proxy🪁"
+
+
+  # ==========================================================
+  # Spotify
+  # ==========================================================
+
+  - name: "Spotify"
+    type: select
+
+    proxies:
+      - "🇸🇬 Singapore"
+      - "🇭🇰 Hong Kong"
+      - "🇺🇸 America"
+      - "Proxy🪁"
+
+
+  # ==========================================================
+  # YouTube
+  # ==========================================================
+
+  - name: "YouTube"
+    type: select
+
+    proxies:
+      - "🇭🇰 Hong Kong"
+      - "🇸🇬 Singapore"
+      - "🇺🇸 America"
+      - "Proxy🪁"
+
+
+  # ==========================================================
+  # YouTube Music
+  # ==========================================================
+
+  - name: "YouTube-Music"
+    type: select
+
+    proxies:
+      - "🇭🇰 Hong Kong"
+      - "🇸🇬 Singapore"
+      - "🇺🇸 America"
+      - "Proxy🪁"
+
+
+  # ==========================================================
+  # Apple Intelligence
+  # ==========================================================
+
+  - name: "Apple-AI"
+    type: select
+
+    proxies:
+      - "Proxy🪁"
+      - "🇺🇸 America"
+      - DIRECT
+
+
+  # ==========================================================
+  # Apple
+  # ==========================================================
+
+  - name: "Apple"
+    type: select
+
+    proxies:
+      - DIRECT
+      - "Proxy🪁"
+
+
+  # ==========================================================
+  # 广告拦截
+  # ==========================================================
+
+  - name: "AdBlock"
+    type: select
+
+    proxies:
+      - REJECT
+      - DIRECT
+
+
+# ============================================================
+# Rule Providers
+#
+# 继续直接使用你的 Surge Rules
+# 不单独维护 Clash Rules
+# ============================================================
+
+rule-providers:
+
+  Apple-AI:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/apple-ai.list"
+    path: ./rule_provider/apple-ai.list
+    interval: 86400
+
+
+  AI:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/ai.list"
+    path: ./rule_provider/ai.list
+    interval: 86400
+
+
+  Apple:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/apple.list"
+    path: ./rule_provider/apple.list
+    interval: 86400
+
+
+  Netflix:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/netflix.list"
+    path: ./rule_provider/netflix.list
+    interval: 86400
+
+
+  Telegram:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/telegram.list"
+    path: ./rule_provider/telegram.list
+    interval: 86400
+
+
+  Twitter:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/twitter.list"
+    path: ./rule_provider/twitter.list
+    interval: 86400
+
+
+  TikTok:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/tiktok.list"
+    path: ./rule_provider/tiktok.list
+    interval: 86400
+
+
+  Spotify:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/spotify.list"
+    path: ./rule_provider/spotify.list
+    interval: 86400
+
+
+  YouTube-Music:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/youtube-music.list"
+    path: ./rule_provider/youtube-music.list
+    interval: 86400
+
+
+  YouTube:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/youtube.list"
+    path: ./rule_provider/youtube.list
+    interval: 86400
+
+
+  AdBlock:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/adblock.list"
+    path: ./rule_provider/adblock.list
+    interval: 86400
+
+
+  China:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/china.list"
+    path: ./rule_provider/china.list
+    interval: 86400
+
+
+# ============================================================
+# Rules
+#
+# 顺序保持你的 Surge 配置逻辑
+# ============================================================
+
+rules:
+
+  # ==========================================================
+  # LAN / 本地网络
+  # ==========================================================
+
+  - DOMAIN-SUFFIX,local,DIRECT
+
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+
+
+  # ==========================================================
+  # GitHub
+  #
+  # 保证配置、规则等可以通过代理正常更新
+  # ==========================================================
+
+  - DOMAIN-SUFFIX,raw.githubusercontent.com,Proxy🪁
+  - DOMAIN-SUFFIX,githubusercontent.com,Proxy🪁
+  - DOMAIN-SUFFIX,github.com,Proxy🪁
+  - DOMAIN-SUFFIX,github.io,Proxy🪁
+
+
+  # ==========================================================
+  # 你原 Surge 中的 example.com
+  # ==========================================================
+
+  - DOMAIN-SUFFIX,example.com,Proxy🪁
+
+
+  # ==========================================================
+  # Apple Intelligence
+  #
+  # 一定放 Apple 前面
+  # ==========================================================
+
+  - RULE-SET,Apple-AI,Apple-AI
+
+
+  # ==========================================================
+  # AI
+  # ==========================================================
+
+  - RULE-SET,AI,AI
+
+
+  # ==========================================================
+  # Apple
+  # ==========================================================
+
+  - RULE-SET,Apple,Apple
+
+
+  # ==========================================================
+  # Netflix
+  # ==========================================================
+
+  - RULE-SET,Netflix,Netflix
+
+
+  # ==========================================================
+  # Telegram
+  # ==========================================================
+
+  - RULE-SET,Telegram,Telegram
+
+
+  # ==========================================================
+  # Twitter / X
+  # ==========================================================
+
+  - RULE-SET,Twitter,Twitter
+
+
+  # ==========================================================
+  # TikTok
+  # ==========================================================
+
+  - RULE-SET,TikTok,TikTok
+
+
+  # ==========================================================
+  # Spotify
+  # ==========================================================
+
+  - RULE-SET,Spotify,Spotify
+
+
+  # ==========================================================
+  # YouTube Music
+  #
+  # 放 YouTube 前面
+  # ==========================================================
+
+  - RULE-SET,YouTube-Music,YouTube-Music
+
+
+  # ==========================================================
+  # YouTube
+  # ==========================================================
+
+  - RULE-SET,YouTube,YouTube
+
+
+  # ==========================================================
+  # 广告
+  # ==========================================================
+
+  - RULE-SET,AdBlock,AdBlock
+
+
+  # ==========================================================
+  # 中国大陆
+  # ==========================================================
+
+  - RULE-SET,China,DIRECT
+
+
+  # ==========================================================
+  # 中国大陆 IP
+  # ==========================================================
+
+  - GEOIP,CN,DIRECT
+
+
+  # ==========================================================
+  # FINAL
+  #
+  # Surge:
+  # FINAL,Final,dns-failed
+  #
+  # Clash:
+  # MATCH,Final
+  # ==========================================================
+
+  - MATCH,Final

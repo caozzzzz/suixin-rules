@@ -1,0 +1,292 @@
+# Clash Verge Rev / Mihomo
+# Adapted from caozzzzz/surge-rules
+# Regional groups removed: US / HK / SG / TW
+
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: info
+ipv6: false
+unified-delay: true
+tcp-concurrent: true
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+tun:
+  enable: false
+  stack: mixed
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
+  auto-route: true
+  auto-detect-interface: true
+
+sniffer:
+  enable: true
+  parse-pure-ip: true
+  override-destination: true
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  skip-domain:
+    - "Mijia Cloud"
+    - "+.push.apple.com"
+
+dns:
+  enable: true
+  ipv6: false
+  respect-rules: true
+  use-hosts: true
+  use-system-hosts: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+
+  nameserver:
+    - https://223.5.5.5/dns-query
+    - https://1.12.12.12/dns-query
+
+  proxy-server-nameserver:
+    - https://223.5.5.5/dns-query
+    - https://1.12.12.12/dns-query
+
+  fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+    - "localhost"
+    - "link-ip.nextdns.io"
+    - "*.msftconnecttest.com"
+    - "*.msftncsi.com"
+    - "*.srv.nintendo.net"
+    - "*.stun.playstation.net"
+    - "xbox.*.microsoft.com"
+    - "*.xboxlive.com"
+    - "*.logon.battlenet.com.cn"
+    - "*.logon.battle.net"
+    - "stun.l.google.com"
+
+proxies:
+  - name: "Snell5"
+    type: snell
+    server: 161.153.0.188
+    port: 17811
+    psk: "YOUR_SNELL_PSK"
+    version: 5
+
+proxy-providers:
+  Airport:
+    type: http
+    url: "https://example.com/你的Clash订阅"
+    path: ./proxy_provider/airport.yaml
+    interval: 86400
+    health-check:
+      enable: true
+      url: http://cp.cloudflare.com/generate_204
+      interval: 600
+
+proxy-groups:
+  - name: "Proxy🪁"
+    type: select
+    proxies:
+      - "Snell5"
+    use:
+      - Airport
+
+  - name: "Final"
+    type: select
+    proxies:
+      - "Proxy🪁"
+      - DIRECT
+
+  - name: "Netflix"
+    type: select
+    proxies:
+      - "Proxy🪁"
+
+  - name: "Telegram"
+    type: select
+    proxies:
+      - "Proxy🪁"
+
+  - name: "Twitter"
+    type: select
+    proxies:
+      - "Proxy🪁"
+
+  - name: "TikTok"
+    type: select
+    proxies:
+      - "Proxy🪁"
+
+  - name: "AI"
+    type: select
+    proxies:
+      - "Proxy🪁"
+
+  - name: "Spotify"
+    type: select
+    proxies:
+      - "Proxy🪁"
+
+  - name: "YouTube"
+    type: select
+    proxies:
+      - "Proxy🪁"
+
+  - name: "YouTube-Music"
+    type: select
+    proxies:
+      - "Proxy🪁"
+
+  - name: "Apple-AI"
+    type: select
+    proxies:
+      - "Proxy🪁"
+      - DIRECT
+
+  - name: "Apple"
+    type: select
+    proxies:
+      - DIRECT
+      - "Proxy🪁"
+
+  - name: "AdBlock"
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+
+rule-providers:
+  Apple-AI:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/apple-ai.list"
+    path: ./rule_provider/apple-ai.list
+    interval: 86400
+
+  AI:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/ai.list"
+    path: ./rule_provider/ai.list
+    interval: 86400
+
+  Apple:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/apple.list"
+    path: ./rule_provider/apple.list
+    interval: 86400
+
+  Netflix:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/netflix.list"
+    path: ./rule_provider/netflix.list
+    interval: 86400
+
+  Telegram:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/telegram.list"
+    path: ./rule_provider/telegram.list
+    interval: 86400
+
+  Twitter:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/twitter.list"
+    path: ./rule_provider/twitter.list
+    interval: 86400
+
+  TikTok:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/tiktok.list"
+    path: ./rule_provider/tiktok.list
+    interval: 86400
+
+  Spotify:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/spotify.list"
+    path: ./rule_provider/spotify.list
+    interval: 86400
+
+  YouTube-Music:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/youtube-music.list"
+    path: ./rule_provider/youtube-music.list
+    interval: 86400
+
+  YouTube:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/youtube.list"
+    path: ./rule_provider/youtube.list
+    interval: 86400
+
+  AdBlock:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/adblock.list"
+    path: ./rule_provider/adblock.list
+    interval: 86400
+
+  China:
+    type: http
+    behavior: classical
+    format: text
+    url: "https://raw.githubusercontent.com/caozzzzz/surge-rules/main/rules/china.list"
+    path: ./rule_provider/china.list
+    interval: 86400
+
+rules:
+  - DOMAIN-SUFFIX,local,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+
+  - DOMAIN-SUFFIX,raw.githubusercontent.com,Proxy🪁
+  - DOMAIN-SUFFIX,githubusercontent.com,Proxy🪁
+  - DOMAIN-SUFFIX,github.com,Proxy🪁
+  - DOMAIN-SUFFIX,github.io,Proxy🪁
+  - DOMAIN-SUFFIX,example.com,Proxy🪁
+
+  - RULE-SET,Apple-AI,Apple-AI
+  - RULE-SET,AI,AI
+  - RULE-SET,Apple,Apple
+  - RULE-SET,Netflix,Netflix
+  - RULE-SET,Telegram,Telegram
+  - RULE-SET,Twitter,Twitter
+  - RULE-SET,TikTok,TikTok
+  - RULE-SET,Spotify,Spotify
+  - RULE-SET,YouTube-Music,YouTube-Music
+  - RULE-SET,YouTube,YouTube
+  - RULE-SET,AdBlock,AdBlock
+  - RULE-SET,China,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,Final

@@ -34,6 +34,18 @@ Essential 系列采用无底板的独立符号，保留品牌和地区辨识度�
 
 ## 首次导入
 
+### Clash / Clash Mi / Clash Verge
+
+三份配置与 `surge.conf` 一样存放在仓库根目录，共用 `rules/` 中的规则：
+
+- [clash.yaml](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/clash.yaml)：保留美国、香港、新加坡、台湾地区策略组。
+- [clashmi.yaml](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/clashmi.yaml)：移除地区策略组，默认开启 TUN。
+- [clashverge.yaml](https://raw.githubusercontent.com/caozzzzz/surge-rules/main/clashverge.yaml)：移除地区策略组，默认关闭 TUN。
+
+导入后在本地将 `YOUR_SNELL_PSK` 替换为自己的 Snell 密钥，并将 Airport 的 `url` 示例地址替换为 Clash 格式订阅。Snell v5 需要所用客户端内核支持；这些文件不包含可直接使用的密钥和订阅。不要把真实密钥或订阅 Token 上传到公开仓库。
+
+### Surge
+
 `surge.conf` 预置了本仓库的可下载示例订阅 `examples/subscription.list`，四个地区组均有名称匹配的示例节点，示例节点不能实际连接。使用时只需将 Airport 行 `policy-path=` 后面的 URL 替换为你的 Surge 格式完整订阅 URL，再把订阅域名规则中的 `example.com` 改成真实订阅域名。Airport 的 `hidden=1` 可改为 `hidden=0` 以显示入口。Zus、Zjp 是独立示例节点，可修改或删除；删除时也要从 Proxy🪁 策略组移除引用。本地控制 API 默认注释关闭。不要将真实订阅 Token 提交到公开仓库。
 
 ## Surge 引用
