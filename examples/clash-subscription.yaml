@@ -1,0 +1,8 @@
+# 导入示例；文档保留地址无法连接。
+proxies:
+  - name: 示例节点（不可连接）
+    type: ss
+    server: 192.0.2.10
+    port: 443
+    cipher: aes-128-gcm
+    password: DEMO_ONLY_NOT_A_SECRET
